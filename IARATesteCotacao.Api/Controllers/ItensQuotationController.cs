@@ -1,4 +1,11 @@
-﻿using MediatR;
+﻿using IARATesteCotacao.Business.ItensQuotationArea.UseCases.AddItensQuotation;
+using IARATesteCotacao.Business.ItensQuotationArea.UseCases.GetItensQuotation;
+using IARATesteCotacao.Business.ItensQuotationArea.UseCases.ListItensQuotation;
+using IARATesteCotacao.Business.ItensQuotationArea.UseCases.RemoveItensQuotation;
+using IARATesteCotacao.Business.ItensQuotationArea.UseCases.UpdateItensQuotation;
+using IARATesteCotacao.Business.Shared;
+using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -22,34 +29,38 @@ namespace IARATesteCotacao.Api.Controllers
 
         // GET: api/<ItensQuotationController>
         [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
+        [ProducesResponseType(typeof(ApiResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResult), StatusCodes.Status400BadRequest)]
+        public async Task<ApiResult> Get(long QuotationId) => await _mediator.Send(new ListItensQuotationCommand { QuotationId = QuotationId });
 
         // GET api/<ItensQuotationController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
+        [HttpGet("{QuotationId}/{ProductId}")]
+        [ProducesResponseType(typeof(ApiResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResult), StatusCodes.Status400BadRequest)]
+        public async Task<ApiResult> Get(long QuotationId, int ProductId) => await _mediator.Send(new GetItensQuotationCommand { QuotationId = QuotationId, ProductId = ProductId });
 
         // POST api/<ItensQuotationController>
         [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
+        [ProducesResponseType(typeof(ApiResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResult), StatusCodes.Status400BadRequest)]
+        public async Task<ApiResult> Post(AddItensQuotationCommand command) => await _mediator.Send(command);
 
         // PUT api/<ItensQuotationController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("{QuotationId}/{ProductId}")]
+        [ProducesResponseType(typeof(ApiResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResult), StatusCodes.Status400BadRequest)]
+        public async Task<ApiResult> Put(UpdateItensQuotationCommand command, long QuotationId, int ProductId)
         {
+            command.QuotationId = QuotationId;
+            command.ProductId = ProductId;
+            return await _mediator.Send(command);
         }
 
         // DELETE api/<ItensQuotationController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+        [HttpDelete("{QuotationId}/{ProductId}")]
+        [ProducesResponseType(typeof(ApiResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResult), StatusCodes.Status400BadRequest)]
+        public async Task<ApiResult> Delete(long QuotationId, int ProductId) => await _mediator.Send(new RemoveItensQuotationCommand
+        { QuotationId = QuotationId, ProductId = ProductId });
     }
 }
